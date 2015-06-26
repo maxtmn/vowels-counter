@@ -1,9 +1,12 @@
 package ua.maxtmn.executor;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import ua.maxtmn.util.CharHolder;
 import ua.maxtmn.util.VowelAverageDecorator;
 import ua.maxtmn.util.VowelCortegeDecorator;
 
@@ -11,46 +14,46 @@ public class VowelsCounter {
 
 	public static Collection<String> countAverageVowelsInWords(
 			Collection<String> words) {
-		Map<String, Float> map = VowelsCounter.countAverage(VowelsCounter
-				.countVowels(words));
-		Set<String> set = new TreeSet<>();
-		for (Entry<String, Float> entry : map.entrySet()) {
-			set.add(new VowelAverageDecorator(entry.toString()).toString());
-		}
-		return set;
+		return VowelsCounter.countVowels(words);
 
 	}
 
-	private static Map<String, Float> countAverage(
-			Map<CharHolder, Integer> vowels) {
-		Map<String, Float> cortege = new TreeMap<>();
-		for (Entry<CharHolder, Integer> vowels_entry : vowels.entrySet()) {
-			if (!cortege.containsKey(vowels_entry.getKey().toString())) {
-				cortege.put(new VowelCortegeDecorator(vowels_entry.toString())
-						.toString(), new Float(vowels_entry.getValue())
-						/ vowels_entry.getKey().size());
-			}
-
-		}
-
-		return cortege;
-	}
-
-	private static Map<CharHolder, Integer> countVowels(Collection<String> words) {
-		Map<CharHolder, Integer> cortege = new HashMap<>();
+	private static Collection<String> countVowels(Collection<String> words) {
+		Map<String, Float> result = new TreeMap<>();
 		for (String word : words) {
 			Set<String> charset = new TreeSet<>();
+			int count = 0;
+			int wordLength = word.length();
 			for (char ch : word.toCharArray()) {
 				if (isVowel(ch)) {
+					count++;
 					charset.add(Character.toString(ch));
 				}
 
 			}
-			cortege.put(new CharHolder(charset), new Integer(word.length()));
 
+			String key = new VowelCortegeDecorator(charset.toString() + ", "
+					+ wordLength).toString();
+			Float average = null;
+			if (!result.containsKey(key)) {
+				average = new Float(wordLength / count);
+
+			} else {
+				Float prev = result.get(key);
+				Float current = new Float(wordLength / count);
+				average = new Float(
+						(prev.doubleValue() + current.doubleValue()) / 2);
+
+			}
+
+			result.put(key, average);
 		}
 
-		return cortege;
+		Set<String> set = new TreeSet<>();
+		for (Entry<String, Float> entry : result.entrySet()) {
+			set.add(new VowelAverageDecorator(entry.toString()).toString());
+		}
+		return set;
 
 	}
 
