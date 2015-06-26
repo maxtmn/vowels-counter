@@ -29,3 +29,12 @@ OUTPUT
 ({a, o}, 5) -> 2
 
 ({a, e}, 4) -> 2
+
+# usage 
+mvn clean install 
+
+in catalog /target find vowels-counter.jar
+
+java -jar vowels-counter C:\INPUT.TXT C:\OUTPUT.TXT
+
+
