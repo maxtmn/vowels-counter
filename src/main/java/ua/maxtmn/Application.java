@@ -1,6 +1,8 @@
 package ua.maxtmn;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -12,7 +14,7 @@ import ua.maxtmn.executor.VowelsCounter;
 import ua.maxtmn.util.FileHelper;
 
 /**
- * java -jar vowels-counter C:\INPUT.TXT C:\OUTPUT.TXT
+ * java -jar vowels-counter.jar C:\INPUT.TXT C:\OUTPUT.TXT
  * 
  * @author Tereshchenko
  * 
@@ -24,9 +26,12 @@ public class Application {
 		if (!readAndValidateParams(args)) {
 			System.exit(1);
 		}
+		final Path pathToFile = Paths.get(args[0]);
+		final Path pathToDestinationFile = Paths.get(args[1]);
+
 		System.out.println("Evaluation started:" + new Date());
 		final Collection<String> inputData = FileHelper
-				.readWordsFromFile(args[0]);
+				.readWordsFromFile(pathToFile);
 
 		final Future<Collection<String>> calculation = Executors
 				.newSingleThreadExecutor().submit(
@@ -45,7 +50,8 @@ public class Application {
 					@Override
 					public Boolean call() throws Exception {
 
-						return FileHelper.writeResultToFile(args[1], result);
+						return FileHelper.writeResultToFile(
+								pathToDestinationFile.toString(), result);
 
 					}
 				});
@@ -56,7 +62,6 @@ public class Application {
 			;
 
 		System.out.println("Evaluation ended:" + new Date());
-		System.exit(1);
 	}
 
 	/**

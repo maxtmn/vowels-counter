@@ -1,9 +1,12 @@
 package ua.maxtmn.util;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
@@ -16,13 +19,15 @@ import java.util.Scanner;
  */
 public class FileHelper {
 
-	public static Collection<String> readWordsFromFile(String pathToFile)
+	private static final String WORDS_DELIMITERS_2_SKIP_REGEX = "[\\.,-]";
+
+	public static Collection<String> readWordsFromFile(Path pathToFile)
 			throws IOException {
 		Collection<String> words = new ArrayList<>();
-		Path path = Paths.get(pathToFile);
-		try (Scanner scanner = new Scanner(path, StandardCharsets.UTF_8.name())) {
+		try (Scanner scanner = new Scanner(pathToFile, StandardCharsets.UTF_8.name())) {
 			while (scanner.hasNext()) {
-				words.add(scanner.next().replaceAll("[\\.,-]", ""));
+				words.add(scanner.next().replaceAll(
+						WORDS_DELIMITERS_2_SKIP_REGEX, ""));
 			}
 		}
 

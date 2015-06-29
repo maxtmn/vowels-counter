@@ -1,6 +1,5 @@
 package ua.maxtmn.util;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -21,9 +20,9 @@ public class FileHelperTest extends TestCase {
 
 	public void test_readWordsFromFile_A$String() throws Exception {
 		String pathToFile = "src/test/resources/input.txt";
-		Collection<String> actual = FileHelper.readWordsFromFile(pathToFile);
+		Collection<String> actual = FileHelper.readWordsFromFile(Paths.get(pathToFile));
 		Collection<String> expected = Arrays.asList("Platon", "made", "bamboo",
-				"boats");
+				"boats", "tt");
 		assertEquals(expected, actual);
 	}
 

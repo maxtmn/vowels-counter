@@ -14,47 +14,61 @@ public class VowelsCounter {
 
 	public static Collection<String> countAverageVowelsInWords(
 			Collection<String> words) {
-		return VowelsCounter.countVowels(words);
+		return VowelsCounter.decorateVowelsResult(VowelsCounter
+				.countVowels(words));
 
 	}
 
-	private static Collection<String> countVowels(Collection<String> words) {
+	private static Map<String, Float> countVowels(Collection<String> words) {
 		Map<String, Float> result = new TreeMap<>();
 		for (String word : words) {
 			Set<String> charset = new TreeSet<>();
-			int count = 0;
+			int vowels_quantity = 0;
 			int wordLength = word.length();
 			for (char ch : word.toCharArray()) {
 				if (isVowel(ch)) {
-					count++;
+					vowels_quantity++;
 					charset.add(Character.toString(ch));
 				}
 
 			}
-
-			String key = new VowelCortegeDecorator(charset.toString() + ", "
-					+ wordLength).toString();
-			Float average = null;
-			if (!result.containsKey(key)) {
-				average = new Float(wordLength / count);
-
-			} else {
-				Float prev = result.get(key);
-				Float current = new Float(wordLength / count);
-				average = new Float(
-						(prev.doubleValue() + current.doubleValue()) / 2);
-
+			if (vowels_quantity != 0) {
+				countAverageVowels(result, charset, vowels_quantity, wordLength);
 			}
 
-			result.put(key, average);
 		}
 
+		return result;
+
+	}
+
+	private static void countAverageVowels(Map<String, Float> result,
+			Set<String> charset, int count, int wordLength) {
+		String key = VowelCortegeDecorator.decorateResult(
+				charset.toString() + ", " + wordLength).toString();
+		Float average = null;
+		if (!result.containsKey(key)) {
+			average = new Float(wordLength / count);
+
+		} else {
+			Float prev = result.get(key);
+			Float current = new Float(wordLength / count);
+			average = new Float(
+					(prev.doubleValue() + current.doubleValue()) / 2);
+
+		}
+
+		result.put(key, average);
+	}
+
+	private static Collection<String> decorateVowelsResult(
+			Map<String, Float> result) {
 		Set<String> set = new TreeSet<>();
 		for (Entry<String, Float> entry : result.entrySet()) {
-			set.add(new VowelAverageDecorator(entry.toString()).toString());
+			set.add(VowelAverageDecorator.decorateResult(entry.toString())
+					.toString());
 		}
 		return set;
-
 	}
 
 	private static boolean isVowel(char ch) {
