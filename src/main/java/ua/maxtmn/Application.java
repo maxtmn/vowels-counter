@@ -5,10 +5,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import ua.maxtmn.executor.VowelsCounter;
 import ua.maxtmn.util.FileHelper;
@@ -28,38 +30,88 @@ public class Application {
 		}
 		final Path pathToFile = Paths.get(args[0]);
 		final Path pathToDestinationFile = Paths.get(args[1]);
-
 		System.out.println("Evaluation started:" + new Date());
+
 		final Collection<String> inputData = FileHelper
 				.readWordsFromFile(pathToFile);
 
-		final Future<Collection<String>> calculation = Executors
-				.newSingleThreadExecutor().submit(
-						new Callable<Collection<String>>() {
-							@Override
-							public Collection<String> call() throws Exception {
+		boolean isDecoratedResult = args[2] == null ? false : Boolean
+				.parseBoolean(args[2]);
 
-								return VowelsCounter
-										.countAverageVowelsInWords(inputData);
+		if (isDecoratedResult) {
+			System.out.println("Be patient, we are beautify response for you.");
 
-							}
-						});
-		final Collection<String> result = calculation.get();
-		Future<Boolean> resultSaving = Executors.newSingleThreadExecutor()
-				.submit(new Callable<Boolean>() {
-					@Override
-					public Boolean call() throws Exception {
+			final Future<Collection<String>> calculation = Executors
+					.newSingleThreadExecutor().submit(
+							new Callable<Collection<String>>() {
+								@Override
+								public Collection<String> call()
+										throws Exception {
 
-						return FileHelper.writeResultToFile(
-								pathToDestinationFile.toString(), result);
+									return VowelsCounter
+											.countAverageVowelsInWords(inputData);
 
-					}
-				});
-		{
-			System.out.println("Writing file is in progress...");
+								}
+							});
+
+			long start = System.nanoTime();
+			final Collection<String> result = calculation.get();
+			System.out.println("computition ended in: "
+					+ TimeUnit.MILLISECONDS.convert(
+							(System.nanoTime() - start), TimeUnit.NANOSECONDS) +" milliseconds");
+			Future<Boolean> resultSaving = Executors.newSingleThreadExecutor()
+					.submit(new Callable<Boolean>() {
+						@Override
+						public Boolean call() throws Exception {
+
+							return FileHelper.writeResultToFile(
+									pathToDestinationFile.toString(), result);
+
+						}
+					});
+			{
+				System.out.println("Writing file is in progress...");
+			}
+			while (!resultSaving.get())
+				;
+		} else {
+			System.out.println("you have choose no-decorating for response.");
+			final Future<Iterable<Entry<String, Float>>> calculation = Executors
+					.newSingleThreadExecutor().submit(
+							new Callable<Iterable<Entry<String, Float>>>() {
+								@Override
+								public Iterable<Entry<String, Float>> call()
+										throws Exception {
+
+									return VowelsCounter
+											.countAverageVowelsInWordsPure(inputData);
+
+								}
+							});
+
+			long start = System.nanoTime();
+			final Iterable<Entry<String, Float>> result = calculation.get();
+			System.out.println("computition ended in: "
+					+ TimeUnit.MILLISECONDS.convert(
+							(System.nanoTime() - start), TimeUnit.NANOSECONDS)+" milliseconds");
+
+			Future<Boolean> resultSaving = Executors.newSingleThreadExecutor()
+					.submit(new Callable<Boolean>() {
+						@Override
+						public Boolean call() throws Exception {
+
+							return FileHelper.writeResultToFile(
+									pathToDestinationFile.toString(), result);
+
+						}
+					});
+			{
+				System.out.println("Writing file is in progress...");
+			}
+			while (!resultSaving.get())
+				;
+
 		}
-		while (!resultSaving.get())
-			;
 
 		System.out.println("Evaluation ended:" + new Date());
 	}
@@ -71,12 +123,14 @@ public class Application {
 	 */
 	private static boolean readAndValidateParams(String[] args) {
 		// length check
-		if (args.length != 2) {
+		if (args.length < 2) {
 			System.err.println();
 			System.err.println("Wrong number of arguments");
 			System.err.println();
 			System.err
-					.println("Usage: java -jar vowels-counter.jar <pathToRead> <pathToWrite>");
+					.println("Usage: java -jar vowels-counter.jar <pathToRead> <pathToWrite> <toBeautifyResponse>");
+			System.err
+					.println("toBeautifyResponse - boolean true/false - optional. Used to increase performance. Gives aprox twice faster calculation.");
 			System.err.println();
 			return false;
 		}

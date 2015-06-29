@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 /**
@@ -24,7 +25,8 @@ public class FileHelper {
 	public static Collection<String> readWordsFromFile(Path pathToFile)
 			throws IOException {
 		Collection<String> words = new ArrayList<>();
-		try (Scanner scanner = new Scanner(pathToFile, StandardCharsets.UTF_8.name())) {
+		try (Scanner scanner = new Scanner(pathToFile,
+				StandardCharsets.UTF_8.name())) {
 			while (scanner.hasNext()) {
 				words.add(scanner.next().replaceAll(
 						WORDS_DELIMITERS_2_SKIP_REGEX, ""));
@@ -44,6 +46,26 @@ public class FileHelper {
 					StandardCharsets.UTF_8.name()));
 			for (String line : content) {
 				writer.write(line);
+				((BufferedWriter) writer).newLine();
+			}
+		} finally {
+			if (writer != null) {
+				writer.flush();
+				writer.close();
+			}
+		}
+		return true;
+	}
+
+	public static Boolean writeResultToFile(String pathToFile, Iterable<Entry<String, Float>> content)
+			throws IOException {
+		Writer writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(pathToFile),
+					StandardCharsets.UTF_8.name()));
+			for (Entry<String, Float> line : content) {
+				writer.write(line.toString());
 				((BufferedWriter) writer).newLine();
 			}
 		} finally {
