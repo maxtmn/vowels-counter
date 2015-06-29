@@ -7,10 +7,10 @@ import junit.framework.TestCase;
 
 public class VowelsCounterTest extends TestCase {
 
-	private static final Collection<String> INPUT = Arrays.asList("Platon",
-			"made", "bamboo", "boats");
+	private static final Collection<String> INPUT = Arrays.asList("The",
+			"time", "traveller");
 	private static final Collection<String> expected = Arrays.asList(
-			"({a, e}, 4) -> 2.0", "({a, o}, 5) -> 2.0", "({a, o}, 6) -> 2.5");
+			"({a, e}, 9) -> 3.0", "({e, i}, 4) -> 2.0", "({e}, 3) -> 3.0");
 
 	public void test_type() throws Exception {
 		assertNotNull(VowelsCounter.class);

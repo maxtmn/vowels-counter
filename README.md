@@ -1,40 +1,26 @@
 # vowels-counter
 
-Coding task:
+Java program that loads all words and determines the average number of vowels per word.
+Result is written to the output file. 
 
- 
-
-Given the supplied text file (INPUT.TXT), write a Java program that loads all words and determines the average number of vowels per word grouped by: set of vowels present in a word and length of the word. Result should be written to the output file (OUTPUT.TXT).
-
- 
-
-Example:
-
- 
+Example: 
 
 INPUT
 
- 
+The time traveller.
 
-Platon made bamboo boats.
 
- 
+OUTPUT 
 
-OUTPUT
-
- 
-
-({a, o}, 6) -> 2.5
-
-({a, o}, 5) -> 2
-
-({a, e}, 4) -> 2
+({a, e}, 9) -> 3.0,
+({e, i}, 4) -> 2.0,
+({e}, 3) -> 3.0
 
 # usage 
 mvn clean install 
 
 in catalog /target find vowels-counter.jar
 
-java -jar vowels-counter C:\INPUT.TXT C:\OUTPUT.TXT
+java -jar vowels-counter.jar C:\INPUT.TXT C:\OUTPUT.TXT
 
 
