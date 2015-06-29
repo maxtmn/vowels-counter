@@ -65,8 +65,7 @@ public class VowelsCounter {
 			Map<String, Float> result) {
 		Set<String> set = new TreeSet<>();
 		for (Entry<String, Float> entry : result.entrySet()) {
-			set.add(VowelAverageDecorator.decorateResult(entry.toString())
-					.toString());
+			set.add(VowelAverageDecorator.decorateResult(entry.toString()));
 		}
 		return set;
 	}
