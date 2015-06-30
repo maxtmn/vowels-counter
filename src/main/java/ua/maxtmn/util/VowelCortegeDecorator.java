@@ -13,9 +13,7 @@ public class VowelCortegeDecorator {
 		if (result == null) {
 			return "";
 		}
-		return "("
-				+ result.replace("=", ", ").replace("[", "{").replace("]", "}")
-				+ ")";
+		return result.replace("[", "{").replace("]", "}");
 	}
 
 	@Override

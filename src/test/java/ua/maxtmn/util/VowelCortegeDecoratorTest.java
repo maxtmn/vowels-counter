@@ -50,7 +50,7 @@ public class VowelCortegeDecoratorTest extends TestCase {
 	public void test_decorateResult_A$() throws Exception {
 		String result = "decorate me with paretneses";
 		String actual = VowelCortegeDecorator.decorateResult(result);
-		String expected = "(" + result + ")";
+		String expected = result;
 		assertEquals(expected, actual);
 	}
 
@@ -61,7 +61,7 @@ public class VowelCortegeDecoratorTest extends TestCase {
 
 		String actual = VowelCortegeDecorator.decorateResult(result);
 
-		String expected = "({a, b}" + no_change + ")";
+		String expected = "{a=b}" + no_change;
 		assertEquals(expected, actual);
 	}
 

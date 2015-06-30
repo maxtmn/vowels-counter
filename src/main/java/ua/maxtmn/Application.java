@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -34,9 +33,10 @@ public class Application {
 
 		final Collection<String> inputData = FileHelper
 				.readWordsFromFile(pathToFile);
-
-		boolean isDecoratedResult = args[2] == null ? false : Boolean
-				.parseBoolean(args[2]);
+		boolean isDecoratedResult = false;
+		if (args.length > 2) {
+			isDecoratedResult = Boolean.parseBoolean(args[2]);
+		}
 
 		if (isDecoratedResult) {
 			System.out.println("Be patient, we are beautify response for you.");
@@ -58,7 +58,8 @@ public class Application {
 			final Collection<String> result = calculation.get();
 			System.out.println("computition ended in: "
 					+ TimeUnit.MILLISECONDS.convert(
-							(System.nanoTime() - start), TimeUnit.NANOSECONDS) +" milliseconds");
+							(System.nanoTime() - start), TimeUnit.NANOSECONDS)
+					+ " milliseconds");
 			Future<Boolean> resultSaving = Executors.newSingleThreadExecutor()
 					.submit(new Callable<Boolean>() {
 						@Override
@@ -76,11 +77,11 @@ public class Application {
 				;
 		} else {
 			System.out.println("you have choose no-decorating for response.");
-			final Future<Iterable<Entry<String, Float>>> calculation = Executors
+			final Future<Collection<String>> calculation = Executors
 					.newSingleThreadExecutor().submit(
-							new Callable<Iterable<Entry<String, Float>>>() {
+							new Callable<Collection<String>>() {
 								@Override
-								public Iterable<Entry<String, Float>> call()
+								public Collection<String> call()
 										throws Exception {
 
 									return VowelsCounter
@@ -90,10 +91,11 @@ public class Application {
 							});
 
 			long start = System.nanoTime();
-			final Iterable<Entry<String, Float>> result = calculation.get();
+			final Collection<String> result = calculation.get();
 			System.out.println("computition ended in: "
 					+ TimeUnit.MILLISECONDS.convert(
-							(System.nanoTime() - start), TimeUnit.NANOSECONDS)+" milliseconds");
+							(System.nanoTime() - start), TimeUnit.NANOSECONDS)
+					+ " milliseconds");
 
 			Future<Boolean> resultSaving = Executors.newSingleThreadExecutor()
 					.submit(new Callable<Boolean>() {

@@ -10,7 +10,7 @@ public class VowelsCounterTest extends TestCase {
 	private static final Collection<String> INPUT = Arrays.asList("The",
 			"time", "traveller");
 	private static final Collection<String> expected = Arrays.asList(
-			"({a, e}, 9) -> 3.0", "({e, i}, 4) -> 2.0", "({e}, 3) -> 3.0");
+			"{a, e}, 9 -> 3.0", "{e, i}, 4 -> 2.0", "{e}, 3 -> 3.0");
 
 	public void test_type() throws Exception {
 		assertNotNull(VowelsCounter.class);
