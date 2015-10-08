@@ -1,7 +1,9 @@
 package ua.maxtmn.executor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -26,7 +28,7 @@ public class VowelsCounter {
 	}
 
 	private static Collection<String> countVowels(Collection<String> words) {
-		Map<String, Float> result = new HashMap<String, Float>();
+		Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
 		for (String word : words) {
 			Set<String> charset = new TreeSet<>();
 			int vowels_quantity = 0;
@@ -45,36 +47,30 @@ public class VowelsCounter {
 		}
 		Set<String> response = new TreeSet<String>();
 
-		for (Entry<String, Float> entry : result.entrySet()) {
-			response.add(entry.toString());
+		for (Entry<String, List<Integer>> entry : result.entrySet()) {
+			List<Integer> clst = entry.getValue();
+			float sum = 0;
+			for (Integer integer : clst) {
+				sum += integer;
+			}
+			response.add(entry.getKey() + " -> " + sum / clst.size());
 		}
 		return response;
 
 	}
 
-	private static Float countAverage(Map<String, Float> result,
-			int vowels_quantity, int wordLength, String key) {
-		Float average = null;
-		if (!result.containsKey(key)) {
-			average = new Float(wordLength / vowels_quantity);
-
-		} else {
-			Float prev = result.get(key);
-			Float current = new Float(wordLength / vowels_quantity);
-			average = new Float(
-					(prev.doubleValue() + current.doubleValue()) / 2);
-
-		}
-		return average;
-	}
-
-	private static void countAverageVowels(Map<String, Float> result,
-			Set<String> charset, int count, int wordLength) {
+	private static void countAverageVowels(Map<String, List<Integer>> result,
+			Set<String> charset, Integer count, int wordLength) {
 		String key = charset.toString() + ", " + wordLength;
-		Float average = countAverage(result, count, wordLength,
-				key);
 
-		result.put(key, average);
+		if (!result.containsKey(key)) {
+			List<Integer> c = new ArrayList<Integer>();
+			c.add(count);
+			result.put(key, c);
+		} else {
+			result.get(key).add(count);
+		}
+
 	}
 
 	private static Collection<String> decorateVowelsResult(
